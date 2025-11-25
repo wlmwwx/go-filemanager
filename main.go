@@ -2,9 +2,12 @@ package main
 
 import (
 	"embed"
+	"fmt"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -13,9 +16,23 @@ import (
 //go:embed frontend/dist/*
 var frontendFS embed.FS
 
-var store = sessions.NewCookieStore([]byte("your-secret-key-change-this-in-production"))
+var store *sessions.CookieStore
 
 func main() {
+	// Load configuration
+	config, err := LoadConfig("config.yaml")
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Initialize session store with configured secret
+	store = sessions.NewCookieStore([]byte(config.Secret))
+
+	// Setup logging
+	if err := setupLogging(config.Log); err != nil {
+		log.Fatalf("Failed to setup logging: %v", err)
+	}
+
 	r := mux.NewRouter()
 
 	// Apply logging middleware to all routes
@@ -63,9 +80,35 @@ func main() {
 		}
 	}))
 
-	log.Println("Server starting on :8080")
+	addr := fmt.Sprintf(":%d", config.Server.Port)
+	log.Printf("Server starting on %s", addr)
 	log.Println("Default credentials: admin / admin123")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := http.ListenAndServe(addr, r); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// setupLogging configures logging based on config
+func setupLogging(logConfig LogConfig) error {
+	if logConfig.File != "" {
+		// Open log file
+		f, err := os.OpenFile(logConfig.File, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			return fmt.Errorf("error opening log file: %v", err)
+		}
+
+		// Write to both file and stdout
+		multiWriter := io.MultiWriter(os.Stdout, f)
+		log.SetOutput(multiWriter)
+		log.Printf("Logging to file: %s", logConfig.File)
+	}
+
+	// Set log flags based on level
+	if logConfig.Level == "debug" {
+		log.SetFlags(log.LstdFlags | log.Lshortfile)
+	} else {
+		log.SetFlags(log.LstdFlags)
+	}
+
+	return nil
 }

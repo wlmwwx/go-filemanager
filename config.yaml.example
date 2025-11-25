@@ -1,0 +1,8 @@
+server:
+  port: 8080
+
+secret: your-secret-key-change-this-in-production
+
+log:
+  file: ""  # Leave empty for stdout only, or specify a file path like "filemanager.log"
+  level: info  # Options: info, debug

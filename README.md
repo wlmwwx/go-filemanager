@@ -46,6 +46,34 @@ The server will start on `http://localhost:8080`
 
 **Default credentials:** `admin` / `admin123`
 
+## Configuration
+
+The application can be configured using a `config.yaml` file in the working directory.
+
+### Configuration File
+
+Create a `config.yaml` file (or copy from `config.yaml.example`):
+
+```yaml
+server:
+  port: 8080
+
+secret: your-secret-key-change-this-in-production
+
+log:
+  file: ""  # Leave empty for stdout only, or specify a file path like "filemanager.log"
+  level: info  # Options: info, debug
+```
+
+### Configuration Options
+
+- **server.port**: Port number for the HTTP server (default: 8080)
+- **secret**: Secret key for session encryption (change this in production!)
+- **log.file**: Path to log file (empty string for stdout only)
+- **log.level**: Logging level - `info` or `debug` (debug includes file names and line numbers)
+
+If `config.yaml` is not found, the application will use default values.
+
 ## Development
 
 ### Backend Development
