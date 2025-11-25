@@ -29,7 +29,7 @@ export const uploadFile = async (path, file) => {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('path', path);
-  
+
   const response = await api.post('/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -43,7 +43,7 @@ export const downloadFile = async (path) => {
     params: { path },
     responseType: 'blob',
   });
-  
+
   // Create download link
   const url = window.URL.createObjectURL(new Blob([response.data]));
   const link = document.createElement('a');
@@ -62,6 +62,11 @@ export const createDirectory = async (path, name) => {
 
 export const deleteItem = async (path) => {
   const response = await api.delete('/delete', { data: { path } });
+  return response.data;
+};
+
+export const changePassword = async (oldPassword, newPassword) => {
+  const response = await api.post('/change-password', { oldPassword, newPassword });
   return response.data;
 };
 

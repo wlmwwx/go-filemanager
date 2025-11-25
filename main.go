@@ -37,6 +37,7 @@ func main() {
 	protected.HandleFunc("/download", DownloadHandler).Methods("GET", "OPTIONS")
 	protected.HandleFunc("/mkdir", MkdirHandler).Methods("POST", "OPTIONS")
 	protected.HandleFunc("/delete", DeleteHandler).Methods("DELETE", "OPTIONS")
+	protected.HandleFunc("/change-password", ChangePasswordHandler).Methods("POST", "OPTIONS")
 
 	// Serve frontend static files
 	frontendSubFS, err := fs.Sub(frontendFS, "frontend/dist")

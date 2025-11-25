@@ -42,3 +42,9 @@ type MkdirRequest struct {
 type DeleteRequest struct {
 	Path string `json:"path"`
 }
+
+// ChangePasswordRequest represents a request to change password
+type ChangePasswordRequest struct {
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}

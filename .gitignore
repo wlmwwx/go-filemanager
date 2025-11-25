@@ -1,3 +1,4 @@
 filemanager
 frontend/node_modules
 frontend/dist
+.filemanager_credentials.json

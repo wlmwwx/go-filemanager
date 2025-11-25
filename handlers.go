@@ -18,8 +18,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Simple authentication (in production, use proper password hashing)
-	if req.Username == "admin" && req.Password == "admin123" {
+	// Load credentials from file
+	creds, err := LoadCredentials()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to load credentials")
+		return
+	}
+
+	// Authenticate user
+	if req.Username == creds.Username && req.Password == creds.Password {
 		session, _ := store.Get(r, "session")
 		session.Values["authenticated"] = true
 		session.Values["username"] = req.Username
@@ -285,6 +292,47 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusOK, SuccessResponse{Message: "Deleted successfully"})
+}
+
+// ChangePasswordHandler handles password change requests
+func ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
+	var req ChangePasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request")
+		return
+	}
+
+	if req.OldPassword == "" || req.NewPassword == "" {
+		respondWithError(w, http.StatusBadRequest, "Old password and new password are required")
+		return
+	}
+
+	if len(req.NewPassword) < 6 {
+		respondWithError(w, http.StatusBadRequest, "New password must be at least 6 characters")
+		return
+	}
+
+	// Load current credentials
+	creds, err := LoadCredentials()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to load credentials")
+		return
+	}
+
+	// Verify old password
+	if req.OldPassword != creds.Password {
+		respondWithError(w, http.StatusUnauthorized, "Old password is incorrect")
+		return
+	}
+
+	// Update password
+	creds.Password = req.NewPassword
+	if err := SaveCredentials(creds); err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to save new password")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, SuccessResponse{Message: "Password changed successfully"})
 }
 
 // Helper functions

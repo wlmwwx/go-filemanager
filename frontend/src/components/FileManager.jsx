@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as api from '../api';
+import ChangePassword from './ChangePassword';
 import './FileManager.css';
 
 function FileManager({ onLogout }) {
@@ -8,6 +9,7 @@ function FileManager({ onLogout }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [uploading, setUploading] = useState(false);
+    const [showChangePassword, setShowChangePassword] = useState(false);
 
     useEffect(() => {
         loadFiles(currentPath);
@@ -128,9 +130,14 @@ function FileManager({ onLogout }) {
             <header className="fm-header">
                 <div className="fm-header-content">
                     <h1>📁 File Manager</h1>
-                    <button onClick={handleLogout} className="logout-button">
-                        Logout
-                    </button>
+                    <div className="header-actions">
+                        <button onClick={() => setShowChangePassword(true)} className="change-password-button">
+                            🔐 Change Password
+                        </button>
+                        <button onClick={handleLogout} className="logout-button">
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -214,6 +221,10 @@ function FileManager({ onLogout }) {
                     </div>
                 )}
             </div>
+
+            {showChangePassword && (
+                <ChangePassword onClose={() => setShowChangePassword(false)} />
+            )}
         </div>
     );
 }
