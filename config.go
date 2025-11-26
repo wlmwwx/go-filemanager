@@ -16,7 +16,8 @@ type Config struct {
 
 // ServerConfig represents server configuration
 type ServerConfig struct {
-	Port int `yaml:"port"`
+	Port    int    `yaml:"port"`
+	RootDir string `yaml:"rootDir"`
 }
 
 // LogConfig represents logging configuration
@@ -29,7 +30,8 @@ type LogConfig struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Server: ServerConfig{
-			Port: 8080,
+			Port:    8080,
+			RootDir: "", // Empty means use current working directory
 		},
 		Secret: "your-secret-key-change-this-in-production",
 		Log: LogConfig{

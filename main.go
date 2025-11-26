@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -23,6 +24,21 @@ func main() {
 	config, err := LoadConfig("config.yaml")
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Change to root directory if configured
+	if config.Server.RootDir != "" {
+		absRootDir, err := filepath.Abs(config.Server.RootDir)
+		if err != nil {
+			log.Fatalf("Failed to resolve root directory: %v", err)
+		}
+		if err := os.Chdir(absRootDir); err != nil {
+			log.Fatalf("Failed to change to root directory %s: %v", absRootDir, err)
+		}
+		log.Printf("Root directory set to: %s", absRootDir)
+	} else {
+		cwd, _ := os.Getwd()
+		log.Printf("Root directory: %s (current working directory)", cwd)
 	}
 
 	// Initialize session store with configured secret

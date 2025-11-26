@@ -1,5 +1,6 @@
 server:
   port: 8080
+  rootDir: ""  # Leave empty to use current working directory, or specify an absolute path
 
 secret: your-secret-key-change-this-in-production
 

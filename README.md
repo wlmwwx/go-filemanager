@@ -57,6 +57,7 @@ Create a `config.yaml` file (or copy from `config.yaml.example`):
 ```yaml
 server:
   port: 8080
+  rootDir: ""  # Leave empty to use current working directory, or specify an absolute path
 
 secret: your-secret-key-change-this-in-production
 
@@ -68,6 +69,7 @@ log:
 ### Configuration Options
 
 - **server.port**: Port number for the HTTP server (default: 8080)
+- **server.rootDir**: Root directory for file operations (empty string uses current working directory)
 - **secret**: Secret key for session encryption (change this in production!)
 - **log.file**: Path to log file (empty string for stdout only)
 - **log.level**: Logging level - `info` or `debug` (debug includes file names and line numbers)
