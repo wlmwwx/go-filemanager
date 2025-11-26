@@ -104,34 +104,66 @@
     margin: 0 5px;
 }
 
-.toolbar-actions {
+.toolbar-controls {
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
-.action-button {
-    padding: 10px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+.view-controls {
+    display: flex;
+    gap: 5px;
+    background: #f0f0f0;
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.view-button {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.view-button:hover {
+    background: #e0e0e0;
+}
+
+.view-button.active {
+    background: white;
+    color: #667eea;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sort-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.sort-button {
+    padding: 8px 16px;
+    background: #f0f0f0;
     border: none;
     border-radius: 8px;
-    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    color: #666;
 }
 
-.action-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+.sort-button:hover {
+    background: #e0e0e0;
 }
 
-.action-button:active {
-    transform: translateY(0);
-}
-
-.upload-button {
-    display: inline-block;
+.sort-button.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
 
 .error-banner {
@@ -260,10 +292,179 @@
     opacity: 0.6;
 }
 
-.delete-button:hover {
+.sort-button.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-button {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.action-button:active {
+    transform: translateY(0);
+}
+
+.upload-button {
+    display: inline-block;
+}
+
+.error-banner {
     background: #fee;
-    opacity: 1;
-    transform: scale(1.1);
+    color: #c33;
+    padding: 15px 20px;
+    margin: 0 20px 20px 20px;
+    border-radius: 8px;
+    border-left: 4px solid #c33;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close-error {
+    background: none;
+    border: none;
+    color: #c33;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+}
+
+.close-error:hover {
+    background: rgba(204, 51, 51, 0.1);
+}
+
+.fm-content {
+    flex: 1;
+    padding: 0 20px 20px 20px;
+}
+
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    font-size: 1.1rem;
+}
+
+/* Grid View */
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.file-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* List View */
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.file-item-list {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.file-item-list:hover {
+    background: #f8f9fa;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.file-item-list .file-icon {
+    font-size: 1.8rem;
+}
+
+.file-item-list .file-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.file-item-list .file-name {
+    min-width: 200px;
+    margin-bottom: 0;
+}
+
+.file-item-list .file-meta {
+    flex-direction: row;
+    gap: 20px;
+}
+
+.file-item-list .file-size {
+    min-width: 80px;
+}
+
+.file-item-list .file-date {
+    min-width: 150px;
 }
 
 @media (max-width: 768px) {

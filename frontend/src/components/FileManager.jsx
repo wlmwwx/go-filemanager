@@ -10,6 +10,9 @@ function FileManager({ onLogout }) {
     const [error, setError] = useState('');
     const [uploading, setUploading] = useState(false);
     const [showChangePassword, setShowChangePassword] = useState(false);
+    const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+    const [sortBy, setSortBy] = useState('name'); // 'name', 'size', 'time'
+    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
 
     useEffect(() => {
         loadFiles(currentPath);
@@ -125,6 +128,44 @@ function FileManager({ onLogout }) {
         return date.toLocaleString();
     };
 
+    const handleSort = (newSortBy) => {
+        if (sortBy === newSortBy) {
+            // Toggle sort order if clicking the same column
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortBy(newSortBy);
+            setSortOrder('asc');
+        }
+    };
+
+    const getSortedFiles = () => {
+        const sorted = [...files].sort((a, b) => {
+            let comparison = 0;
+
+            // Directories first
+            if (a.isDir && !b.isDir) return -1;
+            if (!a.isDir && b.isDir) return 1;
+
+            // Then sort by selected criteria
+            switch (sortBy) {
+                case 'name':
+                    comparison = a.name.localeCompare(b.name);
+                    break;
+                case 'size':
+                    comparison = a.size - b.size;
+                    break;
+                case 'time':
+                    comparison = new Date(a.modTime) - new Date(b.modTime);
+                    break;
+                default:
+                    comparison = 0;
+            }
+
+            return sortOrder === 'asc' ? comparison : -comparison;
+        });
+        return sorted;
+    };
+
     return (
         <div className="file-manager">
             <header className="fm-header">
@@ -154,6 +195,46 @@ function FileManager({ onLogout }) {
                             </span>
                         </span>
                     ))}
+                </div>
+
+                <div className="toolbar-controls">
+                    <div className="view-controls">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`view-button ${viewMode === 'grid' ? 'active' : ''}`}
+                            title="Grid View"
+                        >
+                            ⊞
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`view-button ${viewMode === 'list' ? 'active' : ''}`}
+                            title="List View"
+                        >
+                            ☰
+                        </button>
+                    </div>
+
+                    <div className="sort-controls">
+                        <button
+                            onClick={() => handleSort('name')}
+                            className={`sort-button ${sortBy === 'name' ? 'active' : ''}`}
+                        >
+                            Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </button>
+                        <button
+                            onClick={() => handleSort('size')}
+                            className={`sort-button ${sortBy === 'size' ? 'active' : ''}`}
+                        >
+                            Size {sortBy === 'size' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </button>
+                        <button
+                            onClick={() => handleSort('time')}
+                            className={`sort-button ${sortBy === 'time' ? 'active' : ''}`}
+                        >
+                            Time {sortBy === 'time' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        </button>
+                    </div>
                 </div>
 
                 <div className="toolbar-actions">
@@ -187,9 +268,9 @@ function FileManager({ onLogout }) {
                         <p>📂 This folder is empty</p>
                     </div>
                 ) : (
-                    <div className="file-grid">
-                        {files.map((file, index) => (
-                            <div key={index} className="file-item">
+                    <div className={viewMode === 'grid' ? 'file-grid' : 'file-list'}>
+                        {getSortedFiles().map((file, index) => (
+                            <div key={index} className={viewMode === 'grid' ? 'file-item' : 'file-item-list'}>
                                 <div
                                     className="file-icon"
                                     onClick={() => file.isDir ? handleNavigate(file.name) : handleDownload(file.name)}
@@ -205,8 +286,8 @@ function FileManager({ onLogout }) {
                                         {file.name}
                                     </div>
                                     <div className="file-meta">
-                                        {!file.isDir && <span>{formatSize(file.size)}</span>}
-                                        <span>{formatDate(file.modTime)}</span>
+                                        {!file.isDir && <span className="file-size">{formatSize(file.size)}</span>}
+                                        <span className="file-date">{formatDate(file.modTime)}</span>
                                     </div>
                                 </div>
                                 <button
